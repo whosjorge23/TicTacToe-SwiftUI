@@ -8,16 +8,76 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var squares = Array(repeating: "", count: 9)
+    @State private var isPlayer1 = true
+    @State private var winner = ""
+    @State private var isGameOver = false
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            Text("Player \(isPlayer1 ? "1" : "2")'s Turn")
+                .font(.headline)
+            Spacer()
+            VStack {
+                ForEach(0 ..< 3) { row in
+                    HStack {
+                        ForEach(0 ..< 3) { column in
+                            Button(action: {
+                                if !self.isGameOver {
+                                    self.play(row, column)
+                                }
+                            }) {
+                                Text(self.squares[(row * 3) + column])
+                                    .frame(width: 100, height: 100)
+                                    .font(.largeTitle)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if !winner.isEmpty {
+                Text("Winner: \(winner)")
+                    .font(.title)
+            }
+            Spacer()
         }
-        .padding()
     }
-}
+    
+    func play(_ row: Int, _ column: Int) {
+        let index = (row * 3) + column
+        if squares[index].isEmpty {
+            squares[index] = isPlayer1 ? "X" : "O"
+            checkWinningConditions()
+            isPlayer1.toggle()
+        }
+    }
+    
+    func checkWinningConditions() {
+        let winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+            ]
+        for combination in winningCombinations {
+                let first = combination[0]
+                let second = combination[1]
+                let third = combination[2]
+                
+                if squares[first] == squares[second] && squares[second] == squares[third] && !squares[first].isEmpty {
+                    winner = squares[first]
+                    isGameOver = true
+                    break
+                }
+            }
+            
+            if !squares.contains("") && winner.isEmpty {
+                winner = "It's a tie"
+                isGameOver = true
+            }
+        }
+    }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
