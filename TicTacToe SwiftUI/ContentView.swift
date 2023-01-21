@@ -22,6 +22,7 @@ struct ContentView: View {
                 .font(.headline)
                 .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
                 .padding(.vertical)
+                .font(.title2)
             Spacer()
             VStack {
                 ForEach(0 ..< 3) { row in
@@ -29,13 +30,16 @@ struct ContentView: View {
                         ForEach(0 ..< 3) { column in
                             Button(action: {
                                 if !self.isGameOver {
-                                    self.play(row, column)
+                                    withAnimation(Animation.easeInOut(duration: 0.5)) {
+                                        self.play(row, column)
+                                    }
                                 }
                             }) {
                                 Text(self.squares[(row * 3) + column])
                                     .frame(width: 100, height: 100)
                                     .font(.largeTitle)
                                     .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
+                                    .scaleEffect(self.isPlayer1 ? 1 : 1)
                             }
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
@@ -53,15 +57,18 @@ struct ContentView: View {
             if !winner.isEmpty {
                 Text("Winner: \(winner)")
                     .font(.title)
+                    .padding(.bottom)
+                Button(action: {
+                    self.restartGame()
+                    }) {
+                    Text("Restart Game")
+                        .fontWeight(.medium)
+                        .foregroundColor(.blue)
+                        .font(.title3)
+                }
             }
             Spacer()
-            Button(action: {
-                self.restartGame()
-                }) {
-                Text("Restart Game")
-                    .fontWeight(.medium)
-                    .foregroundColor(.blue)
-            }
+            
             Spacer()
         }
     }
