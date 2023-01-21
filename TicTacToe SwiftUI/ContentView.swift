@@ -15,8 +15,13 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
+            Text("Tic Tac Toe SwiftUI")
+                .font(.largeTitle)
+                .fontWeight(.semibold)
             Text("Player \(isPlayer1 ? "1" : "2")'s Turn")
                 .font(.headline)
+                .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
+                .padding(.vertical)
             Spacer()
             VStack {
                 ForEach(0 ..< 3) { row in
@@ -30,19 +35,43 @@ struct ContentView: View {
                                 Text(self.squares[(row * 3) + column])
                                     .frame(width: 100, height: 100)
                                     .font(.largeTitle)
+                                    .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
                             }
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2), lineWidth: 2)
+                            )
                         }
                     }
                 }
             }
-            
+//            .background(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2), lineWidth: 2)
+            )
             if !winner.isEmpty {
                 Text("Winner: \(winner)")
                     .font(.title)
             }
             Spacer()
+            Button(action: {
+                self.restartGame()
+                }) {
+                Text("Restart Game")
+                    .fontWeight(.medium)
+                    .foregroundColor(.blue)
+            }
+            Spacer()
         }
     }
+    
+    func restartGame() {
+            self.squares = Array(repeating: "", count: 9)
+            self.isPlayer1 = true
+            self.winner = ""
+            self.isGameOver = false
+        }
     
     func play(_ row: Int, _ column: Int) {
         let index = (row * 3) + column
