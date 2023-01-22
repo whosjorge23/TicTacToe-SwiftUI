@@ -12,65 +12,74 @@ struct ContentView: View {
     @State private var isPlayer1 = true
     @State private var winner = ""
     @State private var isGameOver = false
+    @State private var stats = Statistics()
     
     var body: some View {
-        VStack {
-            Text("Tic Tac Toe SwiftUI")
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-            Text("Player \(isPlayer1 ? "1" : "2")'s Turn")
-                .font(.headline)
-                .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
-                .padding(.vertical)
-                .font(.title2)
-            Spacer()
+        NavigationView {
+            
             VStack {
-                ForEach(0 ..< 3) { row in
-                    HStack {
-                        ForEach(0 ..< 3) { column in
-                            Button(action: {
-                                if !self.isGameOver {
-                                    withAnimation(Animation.easeInOut(duration: 0.5)) {
-                                        self.play(row, column)
+                Text("Tic Tac Toe SwiftUI")
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                Text("Player \(isPlayer1 ? "1" : "2")'s Turn")
+                    .font(.headline)
+                    .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
+                    .padding(.vertical)
+                    .font(.title2)
+                Spacer()
+                VStack {
+                    ForEach(0 ..< 3) { row in
+                        HStack {
+                            ForEach(0 ..< 3) { column in
+                                Button(action: {
+                                    if !self.isGameOver {
+                                        withAnimation(Animation.easeInOut(duration: 0.5)) {
+                                            self.play(row, column)
+                                        }
                                     }
+                                }) {
+                                    Text(self.squares[(row * 3) + column])
+                                        .frame(width: 100, height: 100)
+                                        .font(.largeTitle)
+                                        .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
+                                        .scaleEffect(self.isPlayer1 ? 1 : 1)
                                 }
-                            }) {
-                                Text(self.squares[(row * 3) + column])
-                                    .frame(width: 100, height: 100)
-                                    .font(.largeTitle)
-                                    .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
-                                    .scaleEffect(self.isPlayer1 ? 1 : 1)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2), lineWidth: 2)
+                                )
                             }
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2), lineWidth: 2)
-                            )
                         }
                     }
                 }
-            }
-//            .background(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2), lineWidth: 2)
-            )
-            if !winner.isEmpty {
-                Text("Winner: \(winner)")
-                    .font(.title)
-                    .padding(.bottom)
-                Button(action: {
-                    self.restartGame()
+                //            .background(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(self.isPlayer1 ? Color.blue.opacity(0.2) : Color.red.opacity(0.2), lineWidth: 2)
+                )
+                if !winner.isEmpty {
+                    Text("Winner: \(winner)")
+                        .font(.title)
+                        .padding(.bottom)
+                    Button(action: {
+                        self.restartGame()
                     }) {
-                    Text("Restart Game")
-                        .fontWeight(.medium)
-                        .foregroundColor(.blue)
-                        .font(.title3)
+                        Text("Restart Game")
+                            .fontWeight(.medium)
+                            .foregroundColor(.blue)
+                            .font(.title3)
+                    }
                 }
+                Spacer()
+                NavigationLink(destination: StatisticsView(stats: self.$stats)) {
+                                Text("View Statistics")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.blue)
+                            }
+                Spacer()
             }
-            Spacer()
-            
-            Spacer()
         }
+        
     }
     
     func restartGame() {
@@ -86,6 +95,16 @@ struct ContentView: View {
             squares[index] = isPlayer1 ? "X" : "O"
             checkWinningConditions()
             isPlayer1.toggle()
+            if isGameOver {
+                stats.gamesPlayed += 1
+                if winner == "X" {
+                    stats.gamesWon1 += 1
+                } else if winner == "O" {
+                    stats.gamesWon2 += 1
+                } else {
+                    stats.gamesTied += 1
+                }
+            }
         }
     }
     
@@ -113,6 +132,8 @@ struct ContentView: View {
             }
         }
     }
+
+
 
 
 struct ContentView_Previews: PreviewProvider {
