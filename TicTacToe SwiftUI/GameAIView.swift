@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  GameAIView.swift
 //  TicTacToe SwiftUI
 //
-//  Created by Giorgio Giannotta on 21/01/23.
+//  Created by Giorgio Giannotta on 28/01/23.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct GameAIView: View {
     @State private var squares = Array(repeating: "", count: 9)
     @State private var isPlayer1 = true
     @State private var winner = ""
@@ -21,7 +21,7 @@ struct ContentView: View {
                 Text("Tic Tac Toe SwiftUI")
                     .font(.largeTitle)
                     .fontWeight(.semibold)
-                Text("Player \(isPlayer1 ? "1" : "2")'s Turn")
+                Text("\(isPlayer1 ? "Player" : "Computer")'s Turn")
                     .font(.headline)
                     .foregroundColor(self.isPlayer1 ? Color.blue : Color.red)
                     .padding(.vertical)
@@ -90,23 +90,32 @@ struct ContentView: View {
         }
     
     func play(_ row: Int, _ column: Int) {
-        let index = (row * 3) + column
-        if squares[index].isEmpty {
-            squares[index] = isPlayer1 ? "X" : "O"
-            checkWinningConditions()
-            isPlayer1.toggle()
-            if isGameOver {
-                stats.gamesPlayed += 1
-                if winner == "X" {
-                    stats.gamesWon1 += 1
-                } else if winner == "O" {
-                    stats.gamesWon2 += 1
+            let index = (row * 3) + column
+            if squares[index].isEmpty {
+                squares[index] = isPlayer1 ? "X" : "O"
+                checkWinningConditions()
+                if isGameOver {
+                    stats.gamesPlayed += 1
+                    if winner == "X" {
+                        stats.gamesWon1 += 1
+                    } else if winner == "O" {
+                        stats.gamesWon2 += 1
+                    } else {
+                        stats.gamesTied += 1
+                    }
                 } else {
-                    stats.gamesTied += 1
+                    if !isPlayer1 {
+                        // logica per la mossa del computer
+                        let emptySquares = squares.enumerated().filter { $0.element.isEmpty }
+                        if let randomSquare = emptySquares.randomElement() {
+                            squares[randomSquare.offset] = "O"
+                        }
+                        checkWinningConditions()
+                    }
+                    isPlayer1.toggle()
                 }
             }
         }
-    }
     
     func checkWinningConditions() {
         let winningCombinations = [
@@ -131,11 +140,11 @@ struct ContentView: View {
                 isGameOver = true
             }
         }
-    }
+}
 
-
-struct ContentView_Previews: PreviewProvider {
+struct GameAIView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        GameAIView()
     }
 }
+

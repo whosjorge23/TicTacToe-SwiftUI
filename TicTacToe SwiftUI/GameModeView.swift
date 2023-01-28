@@ -9,26 +9,42 @@ import SwiftUI
 
 struct GameModeView: View {
     @State private var selectedMode = 0
-    var body: some View {
-        VStack {
-            
-            Picker(selection: $selectedMode, label: Text("")) {
-                Text("vs AI").tag(0)
-                Text("vs Player").tag(1)
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            Button(action: {
-                if self.selectedMode == 0 {
-                    // inizia gioco contro l'AI
-                } else {
-                    // inizia gioco contro un altro giocatore
+    let modes = ["Play against AI", "Play against another player"]
+
+        var body: some View {
+            NavigationView {
+                VStack(alignment: HorizontalAlignment.center,spacing: 50) {
+                    Text("Choose Game Mode").fontWeight(.bold).font(.largeTitle)
+                    NavigationLink(destination: GameAIView()) {
+                        VStack {
+                            AsyncImage(url: URL(string: "https://cdn-icons-png.flaticon.com/512/2021/2021646.png")) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                Color.blue.opacity(0.1)
+                            }
+                            .frame(width: 200, height: 200)
+                            .cornerRadius(20)
+                            Text("Play against AI").font(.title)
+                        }
+                    }
+                    NavigationLink(destination: ContentView()) {
+                        VStack {
+                            AsyncImage(url: URL(string: "https://cdn-icons-png.flaticon.com/512/4140/4140037.png")) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                Color.blue.opacity(0.1)
+                            }
+                            .frame(width: 200, height: 200)
+                            .cornerRadius(20)
+                            Text("Play against another player").font(.title)
+                        }
+                    }
                 }
-            }) {
-                Text("Start Game")
-                    .fontWeight(.medium)
-                    .foregroundColor(.blue)
             }
-        }
     }
 }
 
