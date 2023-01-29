@@ -11,6 +11,7 @@ struct StatisticsView: View {
     @Binding var stats: Statistics
         var body: some View {
             VStack {
+                Spacer()
                 Text("Statistics")
                 .font(.largeTitle)
                 .fontWeight(.semibold)

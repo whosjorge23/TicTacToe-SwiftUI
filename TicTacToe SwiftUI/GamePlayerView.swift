@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct GamePlayerView: View {
     @State private var squares = Array(repeating: "", count: 9)
     @State private var isPlayer1 = true
     @State private var winner = ""
     @State private var isGameOver = false
     @State private var stats = Statistics()
+    @State private var showingCredits = false
     
     var body: some View {
         NavigationView {
@@ -71,11 +72,14 @@ struct ContentView: View {
                     }
                 }
                 Spacer()
-                NavigationLink(destination: StatisticsView(stats: self.$stats)) {
-                                Text("View Statistics")
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.blue)
-                            }
+                Button("View Statistics") {
+                    showingCredits.toggle()
+                }
+                .sheet(isPresented: $showingCredits) {
+                    StatisticsView(stats: self.$stats)
+                        .presentationDetents([.medium])
+                        .presentationDragIndicator(.hidden)
+                }
                 Spacer()
             }
         }
@@ -136,6 +140,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        GamePlayerView()
     }
 }

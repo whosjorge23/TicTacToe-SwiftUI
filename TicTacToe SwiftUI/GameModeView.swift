@@ -29,7 +29,7 @@ struct GameModeView: View {
                             Text("Play against AI").font(.title)
                         }
                     }
-                    NavigationLink(destination: ContentView()) {
+                    NavigationLink(destination: GamePlayerView()) {
                         VStack {
                             AsyncImage(url: URL(string: "https://cdn-icons-png.flaticon.com/512/4140/4140037.png")) { image in
                                 image
